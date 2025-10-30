@@ -1,0 +1,23 @@
+{
+  "short_name": "KaryaSuchi",
+  "name": "KaryaSuchi - Tasks & Focus",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FFF0F5",
+  "background_color": "#FFF0F5",
+  "description": "Tasks made easy, life made clear. An intelligent to-do list with mood tracking, a focus timer, and productivity analytics."
+}
