@@ -1,9 +1,10 @@
 
+
 import React, { useEffect, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { PlayIcon, PauseIcon, ArrowPathIcon } from './Icons';
-import MochiAnimation from './MochiAnimation';
+import { PlayIcon, PauseIcon, ArrowPathIcon } from './Icons.tsx';
+import MochiAnimation from './MochiAnimation.tsx';
 
 interface FocusTimerProps {
     timeRemaining: number;

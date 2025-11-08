@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 // Fix: Removed non-existent LiveSession from import.
 import { GoogleGenAI, LiveServerMessage, Modality, Blob } from '@google/genai';
 import anime from 'animejs';
-import LiveBackground from './LiveBackground';
+import LiveBackground from './LiveBackground.tsx';
 
 // Audio processing functions (as per guidelines)
 function encode(bytes: Uint8Array): string {

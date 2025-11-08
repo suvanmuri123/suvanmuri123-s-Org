@@ -1,6 +1,14 @@
 // A unique name for our cache
 const CACHE_NAME = 'karyasuchi-v1';
 
+// Import Babel for in-browser transpilation
+try {
+  importScripts('https://unpkg.com/@babel/standalone@7.24.9/babel.min.js');
+} catch (e) {
+  console.error('Failed to import Babel:', e);
+}
+
+
 // The list of files to cache. This is often called the "app shell".
 // NOTE: In a real-world build process, this list would be dynamically generated.
 // For this environment, we are caching the source files.
@@ -65,16 +73,52 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event: This is called every time the app makes a network request.
-// We use a "cache-first" strategy here.
 self.addEventListener('fetch', (event) => {
-  // We only want to handle GET requests.
   if (event.request.method !== 'GET') {
     return;
   }
   
-  // For requests to third-party CDNs, we go network-first to ensure we get updates,
-  // but fall back to cache if offline.
-  if (event.request.url.includes('aistudiocdn.com') || event.request.url.includes('tailwindcss.com')) {
+  const url = new URL(event.request.url);
+
+  // Function to handle fetching and transpiling TS/TSX files
+  const handleTsRequest = (request) => {
+    return caches.match(request)
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(request);
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status} for ${response.url}`);
+        }
+        return response.text();
+      })
+      .then(source => {
+        if (typeof Babel === 'undefined') {
+            throw new Error('Babel is not loaded.');
+        }
+        const transformed = Babel.transform(source, {
+          presets: ['react', 'typescript'],
+          filename: url.pathname, // for better error messages
+        }).code;
+        return new Response(transformed, { headers: { 'Content-Type': 'application/javascript' } });
+      })
+      .catch(error => {
+          console.error("Error transpiling:", url.pathname, error);
+          return new Response(`Error transpiling ${url.pathname}: ${error.message}`, { status: 500 });
+      });
+  };
+
+  // If it's a TS or TSX file, transpile it.
+  if (url.pathname.endsWith('.tsx') || url.pathname.endsWith('.ts')) {
+    event.respondWith(handleTsRequest(event.request));
+    return;
+  }
+  
+  // For requests to third-party CDNs (including Babel), we go network-first.
+  if (event.request.url.includes('aistudiocdn.com') || event.request.url.includes('tailwindcss.com') || event.request.url.includes('unpkg.com')) {
       event.respondWith(
           caches.open(CACHE_NAME).then(cache => {
               return fetch(event.request).then(response => {

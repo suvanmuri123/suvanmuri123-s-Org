@@ -1,20 +1,21 @@
 
 
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Task, Mood, AnalyticsData, View, MoodValue } from './types';
-import { parseTaskFromText } from './services/geminiService';
-import TodoList from './components/TodoList';
-import Analytics from './components/Analytics';
-import FocusTimer from './components/FocusTimer';
-import Notes from './components/Notes';
-import Loader from './components/Loader';
-import Login from './components/Login';
-import SakuraBackground from './components/SakuraBackground';
-import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon, MicrophoneIcon } from './components/Icons';
+import { Task, Mood, AnalyticsData, View, MoodValue } from './types.ts';
+import { parseTaskFromText } from './services/geminiService.ts';
+import TodoList from './components/TodoList.tsx';
+import Analytics from './components/Analytics.tsx';
+import FocusTimer from './components/FocusTimer.tsx';
+import Notes from './components/Notes.tsx';
+import Loader from './components/Loader.tsx';
+import Login from './components/Login.tsx';
+import SakuraBackground from './components/SakuraBackground.tsx';
+import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon, MicrophoneIcon } from './components/Icons.tsx';
 import { parseISO, format } from 'date-fns';
-import LiveCoach from './components/LiveCoach';
+import LiveCoach from './components/LiveCoach.tsx';
 
 const FOCUS_DURATION = 25 * 60; // 25 minutes
 const BREAK_DURATION = 5 * 60; // 5 minutes

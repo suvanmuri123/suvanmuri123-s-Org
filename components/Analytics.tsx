@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { AnalyticsData, Mood, MoodValue } from '../types';
+import { AnalyticsData, Mood, MoodValue } from '../types.ts';
 import { format, parseISO, subDays } from 'date-fns';
 
 const colors = {

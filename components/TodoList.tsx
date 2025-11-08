@@ -1,10 +1,11 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Task } from '../types';
+import { Task } from '../types.ts';
 import { format, isPast, isToday, differenceInDays } from 'date-fns';
-import { PlusIcon, TrashIcon, SparklesIcon } from './Icons';
+import { PlusIcon, TrashIcon, SparklesIcon } from './Icons.tsx';
 
 interface TodoListProps {
   tasks: Task[];

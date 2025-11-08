@@ -1,9 +1,10 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { KaryaSuchiLogo } from './Icons';
-import SakuraBackground from './SakuraBackground';
+import { KaryaSuchiLogo } from './Icons.tsx';
+import SakuraBackground from './SakuraBackground.tsx';
 
 interface LoginProps {
   onLoginSuccess: () => void;

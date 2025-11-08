@@ -1,6 +1,7 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { format } from 'date-fns';
-import { ReflectionData } from '../types';
+import { ReflectionData } from '../types.ts';
 
 const API_KEY = process.env.API_KEY;
 

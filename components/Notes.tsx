@@ -1,12 +1,13 @@
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
-import MoodTracker from './MoodTracker';
-import { Mood, MoodValue, ReflectionData } from '../types';
-import MoodMascot from './MoodMascot';
-import ReflectionIcon, { IconType } from './ReflectionIcon';
-import { getDailySummary } from '../services/geminiService';
-import { SparklesIcon } from './Icons';
+import MoodTracker from './MoodTracker.tsx';
+import { Mood, MoodValue, ReflectionData } from '../types.ts';
+import MoodMascot from './MoodMascot.tsx';
+import ReflectionIcon, { IconType } from './ReflectionIcon.tsx';
+import { getDailySummary } from '../services/geminiService.ts';
+import { SparklesIcon } from './Icons.tsx';
 
 interface NotesProps {
   onAddMood: (mood: MoodValue) => void;

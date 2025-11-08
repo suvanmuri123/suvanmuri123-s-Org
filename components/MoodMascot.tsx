@@ -1,8 +1,9 @@
 
+
 import React, { useEffect, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Mood, MoodValue } from '../types';
+import { Mood, MoodValue } from '../types.ts';
 
 const MascotSVG: React.FC = () => (
     <svg width="100" height="100" viewBox="-50 -50 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">

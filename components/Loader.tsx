@@ -1,8 +1,9 @@
+
 import React, { useEffect, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { KaryaSuchiLogo } from './Icons';
-import SakuraExplosion from './SakuraExplosion';
+import { KaryaSuchiLogo } from './Icons.tsx';
+import SakuraExplosion from './SakuraExplosion.tsx';
 
 const Loader: React.FC = () => {
     const loaderRef = useRef<HTMLDivElement>(null);
