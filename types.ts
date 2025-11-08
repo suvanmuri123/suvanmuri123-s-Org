@@ -24,6 +24,7 @@ export enum View {
   Analytics = 'ANALYTICS',
   FocusTimer = 'FOCUS_TIMER',
   Notes = 'NOTES',
+  Live = 'LIVE',
 }
 
 export interface ReflectionData {

@@ -1,12 +1,13 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { AnalyticsData, Mood } from '../types';
+import { AnalyticsData, Mood, MoodValue } from '../types';
 import { format, parseISO, subDays } from 'date-fns';
 
 const colors = {
     highlight: '#DE3163',
     accent: '#FADADD',
     textSecondary: '#71797E',
+    textPrimary: '#36454F',
     secondary: '#FFFFFF'
 }
 
@@ -19,16 +20,26 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, moods }) => {
     
     const last7Days = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse();
     
+    const moodMapping: { [key in MoodValue]: number } = {
+        '😍': 5,
+        '😊': 4,
+        '🙂': 3,
+        '😐': 2,
+        '😟': 1,
+        '😠': 0,
+    };
+    
+    const moodEmojis: MoodValue[] = ['😠', '😟', '😐', '🙂', '😊', '😍'];
+
     const chartData = last7Days.map(dateStr => {
         const dayData = data.find(d => d.date === dateStr);
         const moodData = moods.find(m => m.date === dateStr);
-        const moodValue = moodData ? { '😊': 5, '😍': 4, '😐': 3, '😢': 2, '😠': 1 }[moodData.mood] : null;
 
         return {
             name: format(parseISO(dateStr), 'MMM d'),
             completed: dayData ? dayData.completed : 0,
             mood: moodData ? moodData.mood : null,
-            moodValue: moodValue
+            moodValue: moodData ? moodMapping[moodData.mood] : null
         };
     });
 
@@ -38,7 +49,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, moods }) => {
             <div className="p-4 bg-secondary/80 backdrop-blur-sm rounded-lg shadow-lg border border-accent">
                 <p className="label font-bold text-text-primary">{`${label}`}</p>
                 <p style={{color: colors.highlight}}>{`Completed: ${payload[0].value}`}</p>
-                {payload[1] && payload[1].payload.mood && <p style={{color: colors.accent}}>{`Mood: ${payload[1].payload.mood}`}</p>}
+                {payload[1] && payload[1].payload.mood && <p style={{color: colors.textPrimary}}>{`Mood: ${payload[1].payload.mood}`}</p>}
             </div>
             );
         }
@@ -59,8 +70,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, moods }) => {
                     >
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.accent}/>
                         <XAxis dataKey="name" stroke={colors.textSecondary} />
-                        <YAxis yAxisId="left" stroke={colors.textSecondary} />
-                        <YAxis yAxisId="right" orientation="right" stroke={colors.textSecondary} domain={[0, 5]} ticks={['😠','😢','😐','😍','😊']} tick={{fontSize: 20}} />
+                        <YAxis yAxisId="left" stroke={colors.textSecondary} allowDecimals={false} />
+                        <YAxis yAxisId="right" orientation="right" stroke={colors.textSecondary} domain={[0, 5]} ticks={[0,1,2,3,4,5]} tickFormatter={(value) => moodEmojis[value] || ''} tick={{fontSize: 20}} />
                         <Tooltip content={<CustomTooltip />} />
                         <Legend />
                         <Line yAxisId="left" type="monotone" dataKey="completed" stroke={colors.highlight} strokeWidth={2} activeDot={{ r: 8 }} />

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
@@ -7,6 +6,45 @@ import SakuraExplosion from './SakuraExplosion';
 
 const Loader: React.FC = () => {
     const loaderRef = useRef<HTMLDivElement>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
+
+    const playPopSound = (pitch: number) => {
+        if (!audioContextRef.current) {
+            try {
+                // Lazily create AudioContext
+                audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            } catch (e) {
+                console.error("Web Audio API is not supported in this browser.");
+                return;
+            }
+        }
+        const audioContext = audioContextRef.current;
+
+        // If context is suspended (due to autoplay policies), try to resume it.
+        // Sound will not play this time, but might on subsequent interactions if resume is successful.
+        if (audioContext.state !== 'running') {
+            audioContext.resume().catch(() => {}); // Silently ignore resume errors
+            return;
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        const now = audioContext.currentTime;
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.2, now + 0.01); // A bit louder
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+
+        oscillator.type = 'triangle'; // A bit sharper than sine
+        oscillator.frequency.setValueAtTime(pitch, now);
+        oscillator.frequency.exponentialRampToValueAtTime(pitch * 0.5, now + 0.1);
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.1);
+    };
 
     useEffect(() => {
         // Fix: cast anime to any to resolve property access errors.
@@ -40,12 +78,14 @@ const Loader: React.FC = () => {
                 // Fix: cast anime to any to resolve property access errors.
                 strokeDashoffset: [(anime as any).setDashoffset, 0],
                 duration: 500,
+                begin: () => playPopSound(440), // A4
             }, '+=100')
             .add({
                 targets: '#logo-path-2',
                 // Fix: cast anime to any to resolve property access errors.
                 strokeDashoffset: [(anime as any).setDashoffset, 0],
                 duration: 500,
+                begin: () => playPopSound(554.37), // C#5
             }, '-=200')
             .add({
                 targets: '#logo-path-3',
@@ -53,6 +93,7 @@ const Loader: React.FC = () => {
                 strokeDashoffset: [(anime as any).setDashoffset, 0],
                 duration: 400,
                 easing: 'easeInOutQuad',
+                begin: () => playPopSound(659.25), // E5
             }, '-=300')
             .add({
                 targets: '#logo-path-4',
@@ -60,18 +101,21 @@ const Loader: React.FC = () => {
                 strokeDashoffset: [(anime as any).setDashoffset, 0],
                 duration: 400,
                 easing: 'easeInOutQuad',
+                begin: () => playPopSound(880), // A5
             }, '-=200')
             .add({
                 targets: '.loader-title',
                 opacity: 1,
                 translateY: 0,
                 duration: 500,
+                begin: () => playPopSound(523.25), // C5
             }, '-=100')
             .add({
                 targets: '.loader-tagline',
                 opacity: 1,
                 translateY: 0,
                 duration: 500,
+                begin: () => playPopSound(698.46), // F5
             }, '-=300')
             .add({
                 targets: ['.loader-logo', '.loader-title', '.loader-tagline'],
@@ -80,6 +124,13 @@ const Loader: React.FC = () => {
                 delay: 500,
                 easing: 'easeInQuad',
             });
+        
+        // Cleanup AudioContext on component unmount
+        return () => {
+            if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+                audioContextRef.current.close();
+            }
+        };
 
     }, []);
 

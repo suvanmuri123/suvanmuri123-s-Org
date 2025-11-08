@@ -12,8 +12,9 @@ import Notes from './components/Notes';
 import Loader from './components/Loader';
 import Login from './components/Login';
 import SakuraBackground from './components/SakuraBackground';
-import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon } from './components/Icons';
+import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon, MicrophoneIcon } from './components/Icons';
 import { parseISO, format } from 'date-fns';
+import LiveCoach from './components/LiveCoach';
 
 const FOCUS_DURATION = 25 * 60; // 25 minutes
 const BREAK_DURATION = 5 * 60; // 5 minutes
@@ -22,7 +23,8 @@ const NAV_ITEMS = [
     { view: View.Tasks, icon: CalendarIcon, label: "Tasks" },
     { view: View.Analytics, icon: ChartBarIcon, label: "Analytics" },
     { view: View.FocusTimer, icon: ClockIcon, label: "Focus Timer" },
-    { view: View.Notes, icon: DocumentTextIcon, label: "Reflection" }
+    { view: View.Notes, icon: DocumentTextIcon, label: "Reflection" },
+    { view: View.Live, icon: MicrophoneIcon, label: "Live Coach" }
 ];
 
 const App: React.FC = () => {
@@ -308,6 +310,8 @@ const App: React.FC = () => {
                 />;
             case View.Notes:
                 return <Notes onAddMood={handleAddMood} lastMood={lastMoodToday} />;
+            case View.Live:
+                return <LiveCoach />;
             default:
                 return null;
         }
