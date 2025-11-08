@@ -1,14 +1,17 @@
 
 import React, { useRef, useEffect } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 
 export const PlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
     const handleMouseEnter = () => {
-        anime({ targets: iconRef.current, rotate: 90, scale: 1.2, duration: 300, easing: 'easeOutBack' });
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({ targets: iconRef.current, rotate: 90, scale: 1.2, duration: 300, easing: 'easeOutBack' });
     };
     const handleMouseLeave = () => {
-        anime({ targets: iconRef.current, rotate: 0, scale: 1, duration: 300, easing: 'easeOutBack' });
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({ targets: iconRef.current, rotate: 0, scale: 1, duration: 300, easing: 'easeOutBack' });
     };
     return (
         <svg ref={iconRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
@@ -19,10 +22,12 @@ export const PlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
 
 export const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
-    const animation = useRef<anime.AnimeInstance | null>(null);
+    // Fix: Replaced anime.AnimeInstance with `any` due to type resolution issues.
+    const animation = useRef<any | null>(null);
     const handleMouseEnter = () => {
         if (animation.current) animation.current.pause();
-        animation.current = anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        animation.current = (anime as any)({
             targets: iconRef.current,
             rotate: ['-10deg', '10deg', '-5deg', '5deg', '0deg'],
             duration: 400,
@@ -40,14 +45,15 @@ export const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => 
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: iconRef.current.querySelectorAll('.sparkle'),
             scale: [1, 1.2, 1],
             opacity: [0.7, 1, 0.7],
             duration: 1800,
             loop: true,
             easing: 'easeInOutSine',
-            delay: anime.stagger(300)
+            delay: (anime as any).stagger(300)
         });
     }, []);
     return (
@@ -94,8 +100,10 @@ export const DocumentTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props)
 
 export const PlayIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
-    const handleMouseEnter = () => { anime({ targets: iconRef.current, scale: 1.1, duration: 200, easing: 'easeOutSine' }); };
-    const handleMouseLeave = () => { anime({ targets: iconRef.current, scale: 1, duration: 200, easing: 'easeOutSine' }); };
+    // Fix: cast anime to any to resolve call signature errors.
+    const handleMouseEnter = () => { (anime as any)({ targets: iconRef.current, scale: 1.1, duration: 200, easing: 'easeOutSine' }); };
+    // Fix: cast anime to any to resolve call signature errors.
+    const handleMouseLeave = () => { (anime as any)({ targets: iconRef.current, scale: 1, duration: 200, easing: 'easeOutSine' }); };
     return (
         <svg ref={iconRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
@@ -105,8 +113,10 @@ export const PlayIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
 
 export const PauseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
-    const handleMouseEnter = () => { anime({ targets: iconRef.current, scale: 1.1, duration: 200, easing: 'easeOutSine' }); };
-    const handleMouseLeave = () => { anime({ targets: iconRef.current, scale: 1, duration: 200, easing: 'easeOutSine' }); };
+    // Fix: cast anime to any to resolve call signature errors.
+    const handleMouseEnter = () => { (anime as any)({ targets: iconRef.current, scale: 1.1, duration: 200, easing: 'easeOutSine' }); };
+    // Fix: cast anime to any to resolve call signature errors.
+    const handleMouseLeave = () => { (anime as any)({ targets: iconRef.current, scale: 1, duration: 200, easing: 'easeOutSine' }); };
     return (
         <svg ref={iconRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
@@ -116,10 +126,12 @@ export const PauseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
 
 export const ArrowPathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
-    const animation = useRef<anime.AnimeInstance | null>(null);
+    // Fix: Replaced anime.AnimeInstance with `any` due to type resolution issues.
+    const animation = useRef<any | null>(null);
     const handleMouseEnter = () => {
         if (animation.current) animation.current.pause();
-        animation.current = anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        animation.current = (anime as any)({
             targets: iconRef.current,
             rotate: '+=360',
             duration: 700,
@@ -136,10 +148,12 @@ export const ArrowPathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =>
 export const LogoutIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
     const iconRef = useRef<SVGSVGElement>(null);
     const handleMouseEnter = () => {
-        anime({ targets: iconRef.current.querySelector('.logout-arrow'), translateX: 3, duration: 300, easing: 'easeOutQuad' });
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({ targets: iconRef.current.querySelector('.logout-arrow'), translateX: 3, duration: 300, easing: 'easeOutQuad' });
     };
     const handleMouseLeave = () => {
-        anime({ targets: iconRef.current.querySelector('.logout-arrow'), translateX: 0, duration: 300, easing: 'easeOutQuad' });
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({ targets: iconRef.current.querySelector('.logout-arrow'), translateX: 0, duration: 300, easing: 'easeOutQuad' });
     };
     return (
         <svg ref={iconRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>

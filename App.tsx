@@ -1,4 +1,7 @@
+
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 import { Task, Mood, AnalyticsData, View, MoodValue } from './types';
 import { parseTaskFromText } from './services/geminiService';
@@ -15,10 +18,18 @@ import { parseISO, format } from 'date-fns';
 const FOCUS_DURATION = 25 * 60; // 25 minutes
 const BREAK_DURATION = 5 * 60; // 5 minutes
 
+const NAV_ITEMS = [
+    { view: View.Tasks, icon: CalendarIcon, label: "Tasks" },
+    { view: View.Analytics, icon: ChartBarIcon, label: "Analytics" },
+    { view: View.FocusTimer, icon: ClockIcon, label: "Focus Timer" },
+    { view: View.Notes, icon: DocumentTextIcon, label: "Reflection" }
+];
+
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(() => {
     const savedTasks = localStorage.getItem('karyaSuchi_tasks');
-    return savedTasks ? JSON.parse(savedTasks).map((t: Task) => ({...t, dueDate: t.dueDate ? parseISO(t.dueDate) : null})) : [];
+    // Fix: Changed type of `t` to `any` because `JSON.parse` returns an object with `dueDate` as a string, not a Date object.
+    return savedTasks ? JSON.parse(savedTasks).map((t: any) => ({...t, dueDate: t.dueDate ? parseISO(t.dueDate) : null})) : [];
   });
   
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>(() => {
@@ -45,6 +56,11 @@ const App: React.FC = () => {
 
   const mainContentRef = useRef<HTMLElement>(null);
   const appContainerRef = useRef<HTMLDivElement>(null);
+  
+  const navRef = useRef<HTMLElement>(null);
+  const navItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,12 +87,73 @@ const App: React.FC = () => {
         localStorage.setItem('karyaSuchi_moods', JSON.stringify(moods));
     }
   }, [moods, isAuthenticated]);
+  
+  const handleViewChange = (view: View) => {
+    if (mainContentRef.current) {
+      (anime as any)({
+        targets: mainContentRef.current,
+        opacity: [1, 0],
+        translateY: [0, 10],
+        duration: 200,
+        easing: 'easeInQuad',
+        complete: () => {
+          setActiveView(view);
+          (anime as any)({
+            targets: mainContentRef.current,
+            opacity: [0, 1],
+            translateY: [10, 0],
+            duration: 300,
+            easing: 'easeOutQuad',
+          });
+        }
+      });
+    } else {
+        setActiveView(view);
+    }
+  };
+  
+  // Animate slider on active view change
+  useEffect(() => {
+      const activeIndex = NAV_ITEMS.findIndex(item => item.view === activeView);
+      const activeNavItem = navItemRefs.current[activeIndex];
+      const navElement = navRef.current;
+
+      if (activeNavItem && navElement && sliderRef.current) {
+          const isMobile = window.innerWidth < 640;
+          if (isMobile) {
+              const { offsetLeft, offsetWidth } = activeNavItem;
+              sliderRef.current.style.width = `${offsetWidth}px`;
+              sliderRef.current.style.height = '100%';
+              sliderRef.current.style.top = '0';
+              (anime as any).remove(sliderRef.current);
+              (anime as any)({
+                  targets: sliderRef.current,
+                  left: offsetLeft,
+                  easing: 'spring(1, 80, 17, 0)',
+                  duration: 600
+              });
+          } else {
+              const { offsetTop, offsetHeight } = activeNavItem;
+              sliderRef.current.style.height = `${offsetHeight}px`;
+              sliderRef.current.style.width = 'calc(100% - 8px)';
+              sliderRef.current.style.left = '4px';
+              (anime as any).remove(sliderRef.current);
+              (anime as any)({
+                  targets: sliderRef.current,
+                  top: offsetTop,
+                  easing: 'spring(1, 80, 17, 0)',
+                  duration: 600
+              });
+          }
+      }
+  }, [activeView, isAuthenticated]); // Re-run on auth change to position correctly
 
   useEffect(() => {
     if (isLoading || !isAuthenticated) return;
 
     if (appContainerRef.current) {
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: appContainerRef.current,
             opacity: [0, 1],
             duration: 800,
@@ -85,7 +162,8 @@ const App: React.FC = () => {
     }
 
     if (mainContentRef.current) {
-      anime({
+      // Fix: cast anime to any to resolve call signature errors.
+      (anime as any)({
         targets: mainContentRef.current,
         opacity: [0, 1],
         translateY: [20, 0],
@@ -93,7 +171,7 @@ const App: React.FC = () => {
         easing: 'easeOutCubic',
       });
     }
-  }, [activeView, isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated]);
   
   // Timer Logic moved to App component
    useEffect(() => {
@@ -105,23 +183,16 @@ const App: React.FC = () => {
             mochiIntervalRef.current = window.setInterval(() => {
                 setMochiCount(prevCount => prevCount + 1);
             }, 10000);
-
-        } else if (timeRemaining === 0) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            if (mochiIntervalRef.current) clearInterval(mochiIntervalRef.current);
-            setIsTimerActive(false);
-
+        } else if (isTimerActive && timeRemaining === 0) {
+            // Timer finished
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(isBreak ? "Break's over! Get back to it!" : "Time for a break! You've earned it.");
+                new Notification(isBreak ? 'Break is over!' : 'Focus session complete!', {
+                    body: isBreak ? 'Time to get back to work.' : 'Time for a short break.',
+                });
             }
-            
-            if (isBreak) {
-                setIsBreak(false);
-                setTimeRemaining(FOCUS_DURATION);
-            } else {
-                setIsBreak(true);
-                setTimeRemaining(BREAK_DURATION);
-            }
+            setIsBreak(!isBreak);
+            setTimeRemaining(isBreak ? FOCUS_DURATION : BREAK_DURATION);
+            setIsTimerActive(false); // Stop the timer automatically
         }
 
         return () => {
@@ -129,104 +200,104 @@ const App: React.FC = () => {
             if (mochiIntervalRef.current) clearInterval(mochiIntervalRef.current);
         };
     }, [isTimerActive, timeRemaining, isBreak]);
-  
-  const toggleTimer = () => {
-      setIsTimerActive(!isTimerActive);
-  };
 
-  const resetTimer = () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (mochiIntervalRef.current) clearInterval(mochiIntervalRef.current);
-      setIsTimerActive(false);
-      setIsBreak(false);
-      setTimeRemaining(FOCUS_DURATION);
-      setMochiCount(1);
-  };
-  
-  const updateAnalytics = useCallback(() => {
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const completedToday = tasks.filter(t => t.completed && t.completionDate === todayStr).length;
+    const resetTimer = useCallback(() => {
+        setIsTimerActive(false);
+        setIsBreak(false);
+        setTimeRemaining(FOCUS_DURATION);
+        setMochiCount(1);
+    }, []);
 
-    setAnalyticsData(prevData => {
-      const todayDataIndex = prevData.findIndex(d => d.date === todayStr);
-      if (todayDataIndex > -1) {
-        const newData = [...prevData];
-        newData[todayDataIndex].completed = completedToday;
-        return newData;
-      } else {
-        return [...prevData, { date: todayStr, completed: completedToday }];
-      }
-    });
-  }, [tasks]);
+    const toggleTimer = useCallback(() => {
+        setIsTimerActive(prev => !prev);
+    }, []);
 
-  const addTask = async (text: string): Promise<Task> => {
-    const parsedTask = await parseTaskFromText(text);
-    const newTask: Task = {
-      id: Date.now(),
-      text: parsedTask.title,
-      completed: false,
-      dueDate: parsedTask.dueDate ? parseISO(parsedTask.dueDate) : null,
-      completionDate: null,
+    const updateAnalytics = useCallback(() => {
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        setAnalyticsData(prevData => {
+            const todayDataIndex = prevData.findIndex(d => d.date === todayStr);
+            const completedToday = tasks.filter(t => t.completed && t.completionDate === todayStr).length;
+
+            if (todayDataIndex > -1) {
+                const newData = [...prevData];
+                newData[todayDataIndex] = { ...newData[todayDataIndex], completed: completedToday };
+                return newData;
+            } else {
+                return [...prevData, { date: todayStr, completed: completedToday }];
+            }
+        });
+    }, [tasks]);
+
+    const handleAddTask = async (text: string): Promise<Task> => {
+        const { title, dueDate } = await parseTaskFromText(text);
+        const newTask: Task = {
+            id: Date.now(),
+            text: title,
+            completed: false,
+            dueDate: dueDate ? parseISO(dueDate) : null,
+            completionDate: null
+        };
+        setTasks(prevTasks => [...prevTasks, newTask]);
+        return newTask;
     };
-    setTasks(prevTasks => [...prevTasks, newTask]);
-    return newTask;
-  };
-  
-  const toggleTask = (id: number) => {
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
-        task.id === id ? { ...task, completed: !task.completed, completionDate: !task.completed ? format(new Date(), 'yyyy-MM-dd') : null } : task
-      )
-    );
-  };
-  
-  useEffect(() => {
-    updateAnalytics();
-  }, [tasks, updateAnalytics]);
 
-  const deleteTask = (id: number) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
-  };
-  
-  const addMood = (mood: MoodValue) => {
-      const todayStr = format(new Date(), 'yyyy-MM-dd');
-      const newMood: Mood = { date: todayStr, mood };
-      setMoods(prevMoods => {
-          const filteredMoods = prevMoods.filter(m => m.date !== todayStr);
-          return [...filteredMoods, newMood];
-      });
-  };
-  
-  const handleLogin = () => {
-    localStorage.setItem('karyaSuchiSession', 'true');
-    setIsAuthenticated(true);
-  };
+    const handleToggleTask = (id: number) => {
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === id ? { ...task, completed: !task.completed, completionDate: !task.completed ? format(new Date(), 'yyyy-MM-dd') : null } : task
+            )
+        );
+        setTimeout(updateAnalytics, 100); // delay to allow state to update
+    };
 
-  const handleLogout = () => {
-    localStorage.removeItem('karyaSuchiSession');
-    setIsAuthenticated(false);
-  };
+    const handleDeleteTask = (id: number) => {
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+        setTimeout(updateAnalytics, 100);
+    };
+    
+    const handleAddMood = (mood: MoodValue) => {
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        setMoods(prevMoods => {
+            const todayMoodIndex = prevMoods.findIndex(m => m.date === todayStr);
+            if (todayMoodIndex > -1) {
+                const newMoods = [...prevMoods];
+                newMoods[todayMoodIndex] = { ...newMoods[todayMoodIndex], mood };
+                return newMoods;
+            } else {
+                return [...prevMoods, { date: todayStr, mood }];
+            }
+        });
+    };
+    
+    const handleLoginSuccess = () => {
+      localStorage.setItem('karyaSuchiSession', 'true');
+      setIsAuthenticated(true);
+    };
 
-  const NavItem = ({ view, icon, label }: { view: View; icon: React.ReactNode; label: string }) => (
-    <button
-      onClick={() => setActiveView(view)}
-      className={`flex flex-col sm:flex-row items-center justify-center sm:justify-start w-full p-3 my-1 rounded-lg transition-colors duration-200 ${
-        activeView === view ? 'bg-highlight text-white' : 'hover:bg-accent'
-      }`}
-    >
-      {icon}
-      <span className="mt-1 sm:mt-0 sm:ml-3 text-xs sm:text-sm font-medium">{label}</span>
-    </button>
-  );
+    const handleLogout = () => {
+        localStorage.removeItem('karyaSuchiSession');
+        setIsAuthenticated(false);
+        setActiveView(View.Tasks); // Reset view
+    };
 
-  const renderView = () => {
-    switch (activeView) {
-      case View.Tasks:
-        return <TodoList tasks={tasks} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} />;
-      case View.Analytics:
-        return <Analytics data={analyticsData} moods={moods}/>;
-      case View.FocusTimer:
-        return <FocusTimer 
+    if (isLoading) {
+        return <Loader />;
+    }
+
+    if (!isAuthenticated) {
+        return <Login onLoginSuccess={handleLoginSuccess} />;
+    }
+    
+    const lastMoodToday = moods.find(m => m.date === format(new Date(), 'yyyy-MM-dd'));
+
+    const renderView = () => {
+        switch (activeView) {
+            case View.Tasks:
+                return <TodoList tasks={tasks} onAddTask={handleAddTask} onToggleTask={handleToggleTask} onDeleteTask={handleDeleteTask} />;
+            case View.Analytics:
+                return <Analytics data={analyticsData} moods={moods} />;
+            case View.FocusTimer:
+                return <FocusTimer
                     timeRemaining={timeRemaining}
                     isActive={isTimerActive}
                     isBreak={isBreak}
@@ -235,53 +306,61 @@ const App: React.FC = () => {
                     resetTimer={resetTimer}
                     totalDuration={isBreak ? BREAK_DURATION : FOCUS_DURATION}
                 />;
-      case View.Notes:
-        return <Notes onAddMood={addMood} lastMood={moods.find(m => m.date === format(new Date(), 'yyyy-MM-dd'))}/>;
-      default:
-        return <TodoList tasks={tasks} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} />;
-    }
-  };
+            case View.Notes:
+                return <Notes onAddMood={handleAddMood} lastMood={lastMoodToday} />;
+            default:
+                return null;
+        }
+    };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  
-  if (!isAuthenticated) {
-      return <Login onLoginSuccess={handleLogin} />;
-  }
+    return (
+        <div ref={appContainerRef} className="opacity-0">
+            <SakuraBackground />
+            <div className="relative z-10 flex flex-col sm:flex-row h-screen max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                {/* --- Sidebar / Top Nav --- */}
+                <header className="sm:w-64 shrink-0 mb-4 sm:mb-0 sm:mr-8">
+                    <div className="flex sm:flex-col justify-between items-center h-full">
+                        <div className="flex items-center space-x-3">
+                            <KaryaSuchiLogo className="w-10 h-10 text-highlight" />
+                            <h1 className="text-2xl font-bold hidden md:block">KaryaSuchi</h1>
+                        </div>
 
-  return (
-    <>
-      <SakuraBackground />
-      <div ref={appContainerRef} className="relative z-10 flex flex-col sm:flex-row h-screen font-sans bg-primary/90 backdrop-blur-sm opacity-0">
-        <nav className="w-full sm:w-20 lg:w-56 bg-secondary/80 p-2 sm:p-4 flex sm:flex-col justify-around sm:justify-start order-last sm:order-first shrink-0 shadow-lg">
-          <div className="flex-grow">
-            <div className="hidden sm:flex flex-col items-center mb-8">
-                <KaryaSuchiLogo className="w-10 h-10 text-highlight shrink-0"/>
-                <h1 className="text-2xl font-bold text-text-primary mt-2 hidden lg:block">KaryaSuchi</h1>
-                <p className="text-xs text-text-secondary mt-1 hidden lg:block text-center">Tasks made easy, life made clear</p>
+                        {/* --- Navigation --- */}
+                        <nav ref={navRef} className="relative bg-secondary/60 backdrop-blur-sm p-1 rounded-lg shadow-inner sm:w-full sm:mt-12">
+                             <div ref={sliderRef} className="nav-slider"></div>
+                            <div className="flex sm:flex-col gap-1 sm:gap-2 relative z-10">
+                                {NAV_ITEMS.map((item, index) => (
+                                    <button
+                                        key={item.view}
+                                        // Fix: The ref callback for a functional component should not return a value. Using a block statement `() => {}` instead of an expression `() => ...` ensures an implicit `undefined` return, satisfying the `(instance: T | null) => void` type.
+                                        ref={el => { navItemRefs.current[index] = el; }}
+                                        onClick={() => handleViewChange(item.view)}
+                                        className={`flex items-center w-full text-left p-3 rounded-md transition-colors duration-200 ${activeView === item.view ? 'text-white' : 'text-text-secondary hover:bg-accent'}`}
+                                        aria-current={activeView === item.view ? 'page' : undefined}
+                                    >
+                                        <item.icon className="w-6 h-6 shrink-0" />
+                                        <span className="ml-3 hidden sm:inline">{item.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </nav>
+
+                        <div className="sm:mt-auto">
+                           <button onClick={handleLogout} className="flex items-center p-3 rounded-md text-text-secondary hover:bg-accent transition-colors">
+                               <LogoutIcon className="w-6 h-6"/>
+                               <span className="ml-3 hidden sm:inline">Logout</span>
+                           </button>
+                        </div>
+                    </div>
+                </header>
+
+                {/* --- Main Content --- */}
+                <main ref={mainContentRef} className="flex-1 bg-secondary/60 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg overflow-y-auto">
+                    {renderView()}
+                </main>
             </div>
-            <NavItem view={View.Tasks} icon={<CalendarIcon className="w-6 h-6 shrink-0"/>} label="Tasks" />
-            <NavItem view={View.Analytics} icon={<ChartBarIcon className="w-6 h-6 shrink-0"/>} label="Analytics" />
-            <NavItem view={View.FocusTimer} icon={<ClockIcon className="w-6 h-6 shrink-0"/>} label="Focus Timer" />
-            <NavItem view={View.Notes} icon={<DocumentTextIcon className="w-6 h-6 shrink-0"/>} label="Reflection" />
-          </div>
-          <div className="sm:mt-auto">
-             <button
-                onClick={handleLogout}
-                className="flex flex-col sm:flex-row items-center justify-center sm:justify-start w-full p-3 my-1 rounded-lg transition-colors duration-200 hover:bg-accent"
-              >
-                <LogoutIcon className="w-6 h-6 shrink-0 text-text-secondary"/>
-                <span className="mt-1 sm:mt-0 sm:ml-3 text-xs sm:text-sm font-medium text-text-secondary">Logout</span>
-              </button>
-          </div>
-        </nav>
-        <main ref={mainContentRef} className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-          {renderView()}
-        </main>
-      </div>
-    </>
-  );
+        </div>
+    );
 };
 
 export default App;

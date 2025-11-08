@@ -5,26 +5,26 @@ const CACHE_NAME = 'karyasuchi-v1';
 // NOTE: In a real-world build process, this list would be dynamically generated.
 // For this environment, we are caching the source files.
 const URLS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/index.tsx',
-  '/App.tsx',
-  '/types.ts',
-  '/services/geminiService.ts',
-  '/components/TodoList.tsx',
-  '/components/Analytics.tsx',
-  '/components/FocusTimer.tsx',
-  '/components/Notes.tsx',
-  '/components/Loader.tsx',
-  '/components/Login.tsx',
-  '/components/SakuraBackground.tsx',
-  '/components/Icons.tsx',
-  '/components/MoodTracker.tsx',
-  '/components/MoodMascot.tsx',
-  '/components/MochiAnimation.tsx',
-  '/components/ReflectionIcon.tsx',
-  '/components/SakuraExplosion.tsx',
-  '/manifest.json'
+  './',
+  './index.html',
+  './index.tsx',
+  './App.tsx',
+  './types.ts',
+  './services/geminiService.ts',
+  './components/TodoList.tsx',
+  './components/Analytics.tsx',
+  './components/FocusTimer.tsx',
+  './components/Notes.tsx',
+  './components/Loader.tsx',
+  './components/Login.tsx',
+  './components/SakuraBackground.tsx',
+  './components/Icons.tsx',
+  './components/MoodTracker.tsx',
+  './components/MoodMascot.tsx',
+  './components/MochiAnimation.tsx',
+  './components/ReflectionIcon.tsx',
+  './components/SakuraExplosion.tsx',
+  './manifest.json'
 ];
 
 // Install event: This is called when the service worker is first installed.

@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 import { KaryaSuchiLogo } from './Icons';
 import SakuraBackground from './SakuraBackground';
@@ -22,7 +23,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   useEffect(() => {
     if (containerRef.current) {
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: containerRef.current,
             opacity: [0, 1],
             translateY: [20, 0],
@@ -34,7 +36,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   const switchMode = (newMode: AuthMode) => {
     if (formContainerRef.current) {
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: formContainerRef.current,
             opacity: 0,
             translateY: -10,
@@ -46,7 +49,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 setSuccess('');
                 setPassword('');
                 setConfirmPassword('');
-                anime({
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({
                     targets: formContainerRef.current,
                     opacity: [0, 1],
                     translateY: [10, 0],
@@ -63,7 +67,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     if (savedUser) {
         const user = JSON.parse(savedUser);
         if (user.email === email && user.password === password) {
-            anime({
+            // Fix: cast anime to any to resolve call signature errors.
+            (anime as any)({
                 targets: containerRef.current,
                 opacity: 0,
                 translateY: -20,
@@ -115,11 +120,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      anime({ targets: e.target, borderColor: '#DE3163', duration: 300 });
+      // Fix: cast anime to any to resolve call signature errors.
+      (anime as any)({ targets: e.target, borderColor: '#DE3163', duration: 300 });
   };
   
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      anime({ targets: e.target, borderColor: '#FADADD', duration: 300 });
+      // Fix: cast anime to any to resolve call signature errors.
+      (anime as any)({ targets: e.target, borderColor: '#FADADD', duration: 300 });
   };
 
   const renderFormContent = () => {

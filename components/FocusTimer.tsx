@@ -1,4 +1,6 @@
+
 import React, { useEffect, useRef } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 import { PlayIcon, PauseIcon, ArrowPathIcon } from './Icons';
 import MochiAnimation from './MochiAnimation';
@@ -38,7 +40,8 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
         const circumference = 2 * Math.PI * 45; // 2 * pi * r
 
         if (progressRef.current) {
-            anime({
+            // Fix: cast anime to any to resolve call signature errors.
+            (anime as any)({
                 targets: progressRef.current,
                 strokeDashoffset: circumference * (1 - progress),
                 easing: 'linear',
@@ -49,7 +52,8 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
 
     const handleToggle = () => {
         if (dialRef.current) {
-            anime({
+            // Fix: cast anime to any to resolve call signature errors.
+            (anime as any)({
                 targets: dialRef.current,
                 scale: [1, 0.95, 1],
                 duration: 300,
@@ -61,7 +65,8 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
 
     const handleReset = () => {
         if (resetRef.current) {
-            anime({
+            // Fix: cast anime to any to resolve call signature errors.
+            (anime as any)({
                 targets: resetRef.current,
                 scale: [1, 0.95, 1],
                 duration: 300,

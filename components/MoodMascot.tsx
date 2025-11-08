@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 import { Mood, MoodValue } from '../types';
 
@@ -53,21 +54,25 @@ interface MoodMascotProps {
 
 const MoodMascot: React.FC<MoodMascotProps> = ({ mood = '😐' }) => {
     const mascotRef = useRef<HTMLDivElement>(null);
-    const animationInstance = useRef<anime.AnimeTimelineInstance | null>(null);
+    // Fix: Replaced anime.AnimeTimelineInstance with `any` due to type resolution issues.
+    const animationInstance = useRef<any | null>(null);
 
     useEffect(() => {
         if (animationInstance.current) {
             animationInstance.current.pause();
         }
-        anime.remove(mascotRef.current);
+        // Fix: cast anime to any to resolve property access errors.
+        (anime as any).remove(mascotRef.current);
 
         const allParts = ['#mascot-eyes-love', '#mascot-eyes-happy', '#mascot-eyes-neutral', '#mascot-eyes-sad', '#mascot-eyes-angry', '#mascot-mouth-love-happy', '#mascot-mouth-smile', '#mascot-mouth-neutral', '#mascot-mouth-sad-angry'];
         
-        anime.set(allParts, { opacity: 0 });
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any).set(allParts, { opacity: 0 });
 
         let eyesToShow = '#mascot-eyes-neutral';
         let mouthToShow = '#mascot-mouth-neutral';
-        let animationProps: anime.AnimeParams = {
+        // Fix: Replaced anime.AnimeParams with `any` due to type resolution issues.
+        let animationProps: any = {
             translateY: ['-3px', '3px'],
             duration: 2500,
             easing: 'easeInOutSine',
@@ -126,7 +131,8 @@ const MoodMascot: React.FC<MoodMascotProps> = ({ mood = '😐' }) => {
                 break;
         }
         
-        const timeline = anime.timeline();
+        // Fix: cast anime to any to resolve property access errors.
+        const timeline = (anime as any).timeline();
         timeline.add({
             targets: mascotRef.current,
             scale: [1, 0.9, 1],

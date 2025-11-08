@@ -1,4 +1,6 @@
+
 import React, { useEffect, useRef } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 
 const MochiSVG: React.FC = () => (
@@ -26,60 +28,71 @@ const MochiAnimation: React.FC<MochiAnimationProps> = ({ isActive, count }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const goToSleep = () => {
-        anime.remove('.mochi-instance');
+        // Fix: cast anime to any to resolve property access errors.
+        (anime as any).remove('.mochi-instance');
 
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: '.mochi-instance',
-            translateX: () => anime.random(-40, 40),
-            translateY: () => 58 + anime.random(-5, 5),
+            translateX: () => (anime as any).random(-40, 40),
+            translateY: () => 58 + (anime as any).random(-5, 5),
             rotate: 0,
             scale: 1,
             duration: 800,
-            delay: anime.stagger(50),
+            delay: (anime as any).stagger(50),
             easing: 'easeOutQuint',
             begin: () => {
-                anime({ targets: '.mochi-eyes-open', opacity: 0, duration: 200, delay: anime.stagger(50, {start: 200}) });
-                anime({ targets: '.mochi-eyes-sleep', opacity: 1, duration: 200, delay: anime.stagger(50, {start: 200}) });
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({ targets: '.mochi-eyes-open', opacity: 0, duration: 200, delay: (anime as any).stagger(50, {start: 200}) });
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({ targets: '.mochi-eyes-sleep', opacity: 1, duration: 200, delay: (anime as any).stagger(50, {start: 200}) });
             },
             complete: () => {
-                anime({
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({
                     targets: '.mochi-instance',
                     scale: [1, 0.98, 1.01, 1],
                     duration: 2500,
                     easing: 'easeInOutSine',
                     loop: true,
                     direction: 'alternate',
-                    delay: anime.stagger(150),
+                    delay: (anime as any).stagger(150),
                 });
             }
         });
     };
 
     const wakeUpAndPlay = () => {
-        anime.remove('.mochi-instance');
-        const path = anime.path('#orbit-path');
+        // Fix: cast anime to any to resolve property access errors.
+        (anime as any).remove('.mochi-instance');
+        // Fix: cast anime to any to resolve property access errors.
+        const path = (anime as any).path('#orbit-path');
 
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: '.mochi-instance',
-            scale: () => [0, anime.random(8, 12) / 10], // Random final size
-            rotate: () => anime.random(-20, 20),
-            delay: anime.stagger(100),
+            scale: () => [0, (anime as any).random(8, 12) / 10], // Random final size
+            rotate: () => (anime as any).random(-20, 20),
+            delay: (anime as any).stagger(100),
             duration: 700,
             easing: 'spring(1, 80, 10, 0)',
              begin: () => {
-                anime({ targets: '.mochi-eyes-sleep', opacity: 0, duration: 50, easing: 'linear' });
-                anime({ targets: '.mochi-eyes-open', opacity: 1, duration: 50, easing: 'linear' });
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({ targets: '.mochi-eyes-sleep', opacity: 0, duration: 50, easing: 'linear' });
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({ targets: '.mochi-eyes-open', opacity: 1, duration: 50, easing: 'linear' });
             },
             complete: () => {
-                anime({
+                // Fix: cast anime to any to resolve call signature errors.
+                (anime as any)({
                     targets: '.mochi-instance',
                     translateX: path('x'),
                     translateY: path('y'),
                     rotate: path('angle'),
                     easing: 'easeInOutSine',
-                    duration: () => anime.random(10000, 18000),
+                    duration: () => (anime as any).random(10000, 18000),
                     loop: true,
-                    delay: anime.stagger(200),
+                    delay: (anime as any).stagger(200),
                 });
             }
         });
@@ -97,7 +110,8 @@ const MochiAnimation: React.FC<MochiAnimationProps> = ({ isActive, count }) => {
 
         return () => {
             clearTimeout(timeoutId);
-            anime.remove('.mochi-instance');
+            // Fix: cast anime to any to resolve property access errors.
+            (anime as any).remove('.mochi-instance');
         };
     }, [isActive, count]);
     

@@ -1,4 +1,6 @@
+
 import React, { useEffect, useRef } from 'react';
+// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 
 const RealisticPetalSVG: React.FC<{ id: number, [key: string]: any }> = ({ id, ...props }) => (
@@ -22,20 +24,22 @@ const SakuraExplosion: React.FC = () => {
         if (!explosionRef.current) return;
 
         const petals = explosionRef.current.children;
-        anime.set(petals, {
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any).set(petals, {
             opacity: 1,
             scale: 0,
         });
 
-        anime({
+        // Fix: cast anime to any to resolve call signature errors.
+        (anime as any)({
             targets: petals,
-            translateX: () => anime.random(-window.innerWidth / 1.5, window.innerWidth / 1.5),
-            translateY: () => anime.random(-window.innerHeight / 1.5, window.innerHeight / 1.5),
-            scale: () => anime.random(1.5, 3.5),
-            rotate: () => anime.random(-720, 720),
+            translateX: () => (anime as any).random(-window.innerWidth / 1.5, window.innerWidth / 1.5),
+            translateY: () => (anime as any).random(-window.innerHeight / 1.5, window.innerHeight / 1.5),
+            scale: () => (anime as any).random(1.5, 3.5),
+            rotate: () => (anime as any).random(-720, 720),
             opacity: [1, 0],
             duration: 3000,
-            delay: anime.stagger(15),
+            delay: (anime as any).stagger(15),
             easing: 'easeOutExpo',
         });
     }, []);
@@ -47,7 +51,7 @@ const SakuraExplosion: React.FC = () => {
                      <RealisticPetalSVG
                         id={i}
                         style={{
-                           width: anime.random(20, 40),
+                           width: (anime as any).random(20, 40),
                            height: 'auto',
                         }}
                     />

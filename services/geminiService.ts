@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { format } from 'date-fns';
+import { ReflectionData } from '../types';
 
 const API_KEY = process.env.API_KEY;
 
@@ -57,5 +58,42 @@ export const parseTaskFromText = async (
       title: text,
       dueDate: null,
     };
+  }
+};
+
+
+export const getDailySummary = async (
+  reflectionData: ReflectionData
+): Promise<string> => {
+  const { win, lesson, skipped, onMyMind, grateful, procrastinated, highlight, growth } = reflectionData;
+
+  const prompt = `
+    Based on the following daily reflection, act as a friendly and encouraging coach.
+    Provide a short, insightful summary (2-3 sentences) and one actionable, positive suggestion for tomorrow.
+    Format your response as plain text. Use "Summary:" and "Suggestion:" as labels on their own lines.
+
+    Today's Reflection:
+    - Today's Win: ${win || 'Not specified'}
+    - Lesson Learned: ${lesson || 'Not specified'}
+    - I Skipped: ${skipped || 'Not specified'}
+    - On My Mind: ${onMyMind || 'Not specified'}
+    - Grateful For: ${grateful || 'Not specified'}
+    - I Procrastinated On: ${procrastinated || 'Not specified'}
+    - Highlight of the Day: ${highlight || 'Not specified'}
+    - Room for Growth: ${growth || 'Not specified'}
+
+    Your summary and suggestion should be warm, empathetic, and focus on positive reinforcement and self-compassion.
+    `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    return response.text;
+  } catch (error) {
+    console.error("Error getting daily summary from Gemini:", error);
+    return "Sorry, I couldn't generate a summary right now. Please try again later.";
   }
 };

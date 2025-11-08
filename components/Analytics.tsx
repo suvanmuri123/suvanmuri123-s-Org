@@ -2,7 +2,6 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { AnalyticsData, Mood } from '../types';
 import { format, parseISO, subDays } from 'date-fns';
-import tailwindConfig from '../../tailwind.config.js'; // Note: This is a pseudo-import for color access
 
 const colors = {
     highlight: '#DE3163',

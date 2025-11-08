@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KaryaSuchi - Tasks made easy, life made clear</title>
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#FFF0F5" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,6 +18,15 @@
               'highlight': '#DE3163',     // Cerise Pink for highlights
               'text-primary': '#36454F',  // Charcoal
               'text-secondary': '#71797E', // Steel Gray
+            },
+            animation: {
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+            },
+            keyframes: {
+              'fade-in': {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
             },
           },
         },
@@ -60,6 +69,16 @@
         animation-timing-function: ease-in-out;
         animation-iteration-count: infinite;
       }
+      
+      .nav-slider {
+        position: absolute;
+        left: 4px;
+        top: 0;
+        border-radius: 0.5rem;
+        background-color: #DE3163;
+        transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 0;
+      }
     </style>
   <script type="importmap">
 {
@@ -77,6 +96,6 @@
 </head>
   <body class="bg-primary text-text-primary">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
