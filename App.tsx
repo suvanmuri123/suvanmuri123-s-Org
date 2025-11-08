@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 // Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
@@ -13,9 +11,8 @@ import Notes from './components/Notes.tsx';
 import Loader from './components/Loader.tsx';
 import Login from './components/Login.tsx';
 import SakuraBackground from './components/SakuraBackground.tsx';
-import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon, MicrophoneIcon } from './components/Icons.tsx';
+import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon } from './components/Icons.tsx';
 import { parseISO, format } from 'date-fns';
-import LiveCoach from './components/LiveCoach.tsx';
 
 const FOCUS_DURATION = 25 * 60; // 25 minutes
 const BREAK_DURATION = 5 * 60; // 5 minutes
@@ -25,7 +22,6 @@ const NAV_ITEMS = [
     { view: View.Analytics, icon: ChartBarIcon, label: "Analytics" },
     { view: View.FocusTimer, icon: ClockIcon, label: "Focus Timer" },
     { view: View.Notes, icon: DocumentTextIcon, label: "Reflection" },
-    { view: View.Live, icon: MicrophoneIcon, label: "Live Coach" }
 ];
 
 const App: React.FC = () => {
@@ -311,8 +307,6 @@ const App: React.FC = () => {
                 />;
             case View.Notes:
                 return <Notes onAddMood={handleAddMood} lastMood={lastMoodToday} />;
-            case View.Live:
-                return <LiveCoach />;
             default:
                 return null;
         }

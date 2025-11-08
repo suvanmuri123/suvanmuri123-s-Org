@@ -1,7 +1,5 @@
 {
   "name": "Copy of KaryaSuchi",
   "description": "Tasks made easy, life made clear. An intelligent to-do list with mood tracking, a focus timer, and productivity analytics, powered by the Gemini API.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "requestFramePermissions": []
 }
