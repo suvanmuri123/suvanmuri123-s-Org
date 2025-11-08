@@ -1,17 +1,15 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Task, Mood, AnalyticsData, View, MoodValue } from './types.ts';
-import { parseTaskFromText } from './services/geminiService.ts';
-import TodoList from './components/TodoList.tsx';
-import Analytics from './components/Analytics.tsx';
-import FocusTimer from './components/FocusTimer.tsx';
-import Notes from './components/Notes.tsx';
-import Loader from './components/Loader.tsx';
-import Login from './components/Login.tsx';
-import SakuraBackground from './components/SakuraBackground.tsx';
-import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon } from './components/Icons.tsx';
+import { Task, Mood, AnalyticsData, View, MoodValue } from './types';
+import { parseTaskFromText } from './services/geminiService';
+import TodoList from './components/TodoList';
+import Analytics from './components/Analytics';
+import FocusTimer from './components/FocusTimer';
+import Notes from './components/Notes';
+import Loader from './components/Loader';
+import Login from './components/Login';
+import SakuraBackground from './components/SakuraBackground';
+import { CalendarIcon, ChartBarIcon, ClockIcon, DocumentTextIcon, KaryaSuchiLogo, LogoutIcon } from './components/Icons';
 import { parseISO, format } from 'date-fns';
 
 const FOCUS_DURATION = 25 * 60; // 25 minutes
@@ -27,7 +25,6 @@ const NAV_ITEMS = [
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(() => {
     const savedTasks = localStorage.getItem('karyaSuchi_tasks');
-    // Fix: Changed type of `t` to `any` because `JSON.parse` returns an object with `dueDate` as a string, not a Date object.
     return savedTasks ? JSON.parse(savedTasks).map((t: any) => ({...t, dueDate: t.dueDate ? parseISO(t.dueDate) : null})) : [];
   });
   
@@ -89,7 +86,7 @@ const App: React.FC = () => {
   
   const handleViewChange = (view: View) => {
     if (mainContentRef.current) {
-      (anime as any)({
+      anime({
         targets: mainContentRef.current,
         opacity: [1, 0],
         translateY: [0, 10],
@@ -97,7 +94,7 @@ const App: React.FC = () => {
         easing: 'easeInQuad',
         complete: () => {
           setActiveView(view);
-          (anime as any)({
+          anime({
             targets: mainContentRef.current,
             opacity: [0, 1],
             translateY: [10, 0],
@@ -124,8 +121,8 @@ const App: React.FC = () => {
               sliderRef.current.style.width = `${offsetWidth}px`;
               sliderRef.current.style.height = '100%';
               sliderRef.current.style.top = '0';
-              (anime as any).remove(sliderRef.current);
-              (anime as any)({
+              anime.remove(sliderRef.current);
+              anime({
                   targets: sliderRef.current,
                   left: offsetLeft,
                   easing: 'spring(1, 80, 17, 0)',
@@ -136,8 +133,8 @@ const App: React.FC = () => {
               sliderRef.current.style.height = `${offsetHeight}px`;
               sliderRef.current.style.width = 'calc(100% - 8px)';
               sliderRef.current.style.left = '4px';
-              (anime as any).remove(sliderRef.current);
-              (anime as any)({
+              anime.remove(sliderRef.current);
+              anime({
                   targets: sliderRef.current,
                   top: offsetTop,
                   easing: 'spring(1, 80, 17, 0)',
@@ -151,8 +148,7 @@ const App: React.FC = () => {
     if (isLoading || !isAuthenticated) return;
 
     if (appContainerRef.current) {
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: appContainerRef.current,
             opacity: [0, 1],
             duration: 800,
@@ -161,8 +157,7 @@ const App: React.FC = () => {
     }
 
     if (mainContentRef.current) {
-      // Fix: cast anime to any to resolve call signature errors.
-      (anime as any)({
+      anime({
         targets: mainContentRef.current,
         opacity: [0, 1],
         translateY: [20, 0],
@@ -331,7 +326,6 @@ const App: React.FC = () => {
                                 {NAV_ITEMS.map((item, index) => (
                                     <button
                                         key={item.view}
-                                        // Fix: The ref callback for a functional component should not return a value. Using a block statement `() => {}` instead of an expression `() => ...` ensures an implicit `undefined` return, satisfying the `(instance: T | null) => void` type.
                                         ref={el => { navItemRefs.current[index] = el; }}
                                         onClick={() => handleViewChange(item.view)}
                                         className={`flex items-center w-full text-left p-3 rounded-md transition-colors duration-200 ${activeView === item.view ? 'text-white' : 'text-text-secondary hover:bg-accent'}`}

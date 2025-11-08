@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-// Fix: Removed non-existent LiveSession from import.
 import { GoogleGenAI, LiveServerMessage, Modality, Blob } from '@google/genai';
 import anime from 'animejs';
-import LiveBackground from './LiveBackground.tsx';
+import LiveBackground from './LiveBackground';
 
 // Audio processing functions (as per guidelines)
 function encode(bytes: Uint8Array): string {
@@ -51,7 +50,6 @@ interface Transcript {
 }
 
 const LiveCoach: React.FC = () => {
-    // Fix: Replaced state with refs for session promise and other non-rendering values.
     const sessionPromiseRef = useRef<Promise<any> | null>(null);
     const [isConnecting, setIsConnecting] = useState(false);
     const [isActive, setIsActive] = useState(false);
@@ -103,7 +101,6 @@ const LiveCoach: React.FC = () => {
         };
     };
 
-    // Fix: Added stopSession to clean up resources.
     const stopSession = useCallback(async () => {
         if (!isActive && !isConnecting) return;
         setIsActive(false);
@@ -169,7 +166,6 @@ const LiveCoach: React.FC = () => {
 
             const sessionPromise = ai.live.connect({
                 model: 'gemini-2.5-flash-native-audio-preview-09-2025',
-                // Fix: Implemented all required callbacks (onopen, onmessage, onerror, onclose).
                 callbacks: {
                     onopen: () => {
                         console.log('Live session open');
@@ -226,11 +222,9 @@ const LiveCoach: React.FC = () => {
                         }
 
                         if (message.serverContent?.inputTranscription) {
-                           // Fix: Cast inputTranscription to `any` to access `isFinal` property, which exists in the API response but may be missing from the type definition.
                            updateTranscript('user', message.serverContent.inputTranscription.text, (message.serverContent.inputTranscription as any).isFinal ?? false);
                         }
                         if (message.serverContent?.outputTranscription) {
-                           // Fix: Cast outputTranscription to `any` to access `isFinal` property, which exists in the API response but may be missing from the type definition.
                            updateTranscript('model', message.serverContent.outputTranscription.text, (message.serverContent.outputTranscription as any).isFinal ?? false);
                         }
                     },
@@ -343,5 +337,4 @@ const LiveCoach: React.FC = () => {
     );
 };
 
-// Fix: Added default export.
 export default LiveCoach;

@@ -1,9 +1,8 @@
 
 import React, { useEffect, useRef } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { KaryaSuchiLogo } from './Icons.tsx';
-import SakuraExplosion from './SakuraExplosion.tsx';
+import { KaryaSuchiLogo } from './Icons';
+import SakuraExplosion from './SakuraExplosion';
 
 const Loader: React.FC = () => {
     const loaderRef = useRef<HTMLDivElement>(null);
@@ -48,23 +47,19 @@ const Loader: React.FC = () => {
     };
 
     useEffect(() => {
-        // Fix: cast anime to any to resolve property access errors.
-        const timeline = (anime as any).timeline({
+        const timeline = anime.timeline({
             easing: 'easeInOutSine',
         });
 
         // Set initial states
-        // Fix: cast anime to any to resolve property access errors.
-        (anime as any).set(['#logo-path-1', '#logo-path-2', '#logo-path-3', '#logo-path-4'], {
-             strokeDashoffset: (anime as any).setDashoffset,
+        anime.set(['#logo-path-1', '#logo-path-2', '#logo-path-3', '#logo-path-4'], {
+             strokeDashoffset: anime.setDashoffset,
              opacity: 1
         });
-        // Fix: cast anime to any to resolve property access errors.
-        (anime as any).set(['.loader-title', '.loader-tagline', '.loader-logo'], {
+        anime.set(['.loader-title', '.loader-tagline', '.loader-logo'], {
             opacity: 0,
         });
-        // Fix: cast anime to any to resolve property access errors.
-        (anime as any).set('.loader-title, .loader-tagline', {
+        anime.set('.loader-title, .loader-tagline', {
             translateY: 20
         });
 
@@ -76,30 +71,26 @@ const Loader: React.FC = () => {
             })
             .add({
                 targets: '#logo-path-1',
-                // Fix: cast anime to any to resolve property access errors.
-                strokeDashoffset: [(anime as any).setDashoffset, 0],
+                strokeDashoffset: [anime.setDashoffset, 0],
                 duration: 500,
                 begin: () => playPopSound(440), // A4
             }, '+=100')
             .add({
                 targets: '#logo-path-2',
-                // Fix: cast anime to any to resolve property access errors.
-                strokeDashoffset: [(anime as any).setDashoffset, 0],
+                strokeDashoffset: [anime.setDashoffset, 0],
                 duration: 500,
                 begin: () => playPopSound(554.37), // C#5
             }, '-=200')
             .add({
                 targets: '#logo-path-3',
-                // Fix: cast anime to any to resolve property access errors.
-                strokeDashoffset: [(anime as any).setDashoffset, 0],
+                strokeDashoffset: [anime.setDashoffset, 0],
                 duration: 400,
                 easing: 'easeInOutQuad',
                 begin: () => playPopSound(659.25), // E5
             }, '-=300')
             .add({
                 targets: '#logo-path-4',
-                // Fix: cast anime to any to resolve property access errors.
-                strokeDashoffset: [(anime as any).setDashoffset, 0],
+                strokeDashoffset: [anime.setDashoffset, 0],
                 duration: 400,
                 easing: 'easeInOutQuad',
                 begin: () => playPopSound(880), // A5

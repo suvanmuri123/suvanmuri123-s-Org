@@ -1,11 +1,9 @@
 
-
 import React, { useState, useEffect, useRef } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Task } from '../types.ts';
+import { Task } from '../types';
 import { format, isPast, isToday, differenceInDays } from 'date-fns';
-import { PlusIcon, TrashIcon, SparklesIcon } from './Icons.tsx';
+import { PlusIcon, TrashIcon, SparklesIcon } from './Icons';
 
 interface TodoListProps {
   tasks: Task[];
@@ -61,8 +59,7 @@ const TaskItem: React.FC<{ task: Task; onToggleTask: (id: number) => void; onDel
 
     useEffect(() => {
         if (itemRef.current) {
-            // Fix: cast anime to any to resolve call signature errors.
-            (anime as any)({
+            anime({
                 targets: itemRef.current,
                 opacity: [0, 1],
                 translateY: [-20, 0],
@@ -74,8 +71,7 @@ const TaskItem: React.FC<{ task: Task; onToggleTask: (id: number) => void; onDel
 
     const handleDelete = () => {
         if (itemRef.current) {
-            // Fix: cast anime to any to resolve call signature errors.
-            (anime as any)({
+            anime({
                 targets: itemRef.current,
                 opacity: 0,
                 translateX: [0, 50],
@@ -95,8 +91,7 @@ const TaskItem: React.FC<{ task: Task; onToggleTask: (id: number) => void; onDel
     
     const handleToggle = () => {
         if(itemRef.current) {
-            // Fix: cast anime to any to resolve call signature errors.
-            (anime as any)({
+            anime({
                 targets: itemRef.current,
                 scale: [1, 1.02, 1],
                 duration: 300,

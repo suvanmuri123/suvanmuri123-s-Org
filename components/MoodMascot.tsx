@@ -1,9 +1,8 @@
 
 
 import React, { useEffect, useRef } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { Mood, MoodValue } from '../types.ts';
+import { MoodValue } from '../types';
 
 const MascotSVG: React.FC = () => (
     <svg width="100" height="100" viewBox="-50 -50 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,25 +54,21 @@ interface MoodMascotProps {
 
 const MoodMascot: React.FC<MoodMascotProps> = ({ mood = '😐' }) => {
     const mascotRef = useRef<HTMLDivElement>(null);
-    // Fix: Replaced anime.AnimeTimelineInstance with `any` due to type resolution issues.
-    const animationInstance = useRef<any | null>(null);
+    const animationInstance = useRef<anime.AnimeTimelineInstance | null>(null);
 
     useEffect(() => {
         if (animationInstance.current) {
             animationInstance.current.pause();
         }
-        // Fix: cast anime to any to resolve property access errors.
-        (anime as any).remove(mascotRef.current);
+        anime.remove(mascotRef.current);
 
         const allParts = ['#mascot-eyes-love', '#mascot-eyes-happy', '#mascot-eyes-neutral', '#mascot-eyes-sad', '#mascot-eyes-angry', '#mascot-mouth-love-happy', '#mascot-mouth-smile', '#mascot-mouth-neutral', '#mascot-mouth-sad-angry'];
         
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any).set(allParts, { opacity: 0 });
+        anime.set(allParts, { opacity: 0 });
 
         let eyesToShow = '#mascot-eyes-neutral';
         let mouthToShow = '#mascot-mouth-neutral';
-        // Fix: Replaced anime.AnimeParams with `any` due to type resolution issues.
-        let animationProps: any = {
+        let animationProps: anime.AnimeParams = {
             translateY: ['-3px', '3px'],
             duration: 2500,
             easing: 'easeInOutSine',
@@ -132,8 +127,7 @@ const MoodMascot: React.FC<MoodMascotProps> = ({ mood = '😐' }) => {
                 break;
         }
         
-        // Fix: cast anime to any to resolve property access errors.
-        const timeline = (anime as any).timeline();
+        const timeline = anime.timeline();
         timeline.add({
             targets: mascotRef.current,
             scale: [1, 0.9, 1],

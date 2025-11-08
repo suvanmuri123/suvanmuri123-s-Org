@@ -1,14 +1,12 @@
 
 import React, { useEffect, useRef } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
 
 const WinIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current.querySelector('path'),
             scale: [1, 1.1, 1],
             rotate: ['-5deg', '5deg', '0deg'],
@@ -29,8 +27,7 @@ const LessonIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current,
             opacity: [0.7, 1, 0.7],
             duration: 2000,
@@ -49,14 +46,13 @@ const SkippedIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: [iconRef.current.querySelector('.eye-left'), iconRef.current.querySelector('.eye-right')],
             translateX: ['-1px', '1px', '-1px'],
             duration: 3000,
             loop: true,
             easing: 'easeInOutSine',
-            delay: (anime as any).stagger(100),
+            delay: anime.stagger(100),
         });
     }, []);
     return (
@@ -71,8 +67,7 @@ const OnMyMindIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current.querySelectorAll('circle'),
             translateY: -5,
             opacity: [1, 0],
@@ -80,7 +75,7 @@ const OnMyMindIcon: React.FC = () => {
             duration: 2500,
             loop: true,
             easing: 'linear',
-            delay: (anime as any).stagger(500),
+            delay: anime.stagger(500),
         });
     }, []);
     return (
@@ -97,8 +92,7 @@ const GratefulIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current,
             scale: [1, 1.1, 1],
             duration: 1800,
@@ -117,15 +111,14 @@ const ProcrastinatedIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current.querySelectorAll('text'),
             translateY: -4,
             opacity: [1, 0],
             duration: 3000,
             loop: true,
             easing: 'linear',
-            delay: (anime as any).stagger(700)
+            delay: anime.stagger(700)
         });
     }, []);
     return (
@@ -142,15 +135,14 @@ const HighlightIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current.querySelectorAll('path:last-child'),
             opacity: [0, 1, 0],
             scale: [0, 1.2],
             duration: 1500,
             loop: true,
             easing: 'linear',
-            delay: (anime as any).stagger(300),
+            delay: anime.stagger(300),
         });
     }, []);
     return (
@@ -166,8 +158,7 @@ const GrowthIcon: React.FC = () => {
     const iconRef = useRef<SVGSVGElement>(null);
     useEffect(() => {
         if (!iconRef.current) return;
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: iconRef.current.querySelector('.sprout'),
             rotate: ['-10deg', '10deg'],
             duration: 3000,

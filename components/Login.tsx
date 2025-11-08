@@ -1,10 +1,9 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
-// Fix: cast anime to any to resolve call signature errors due to module resolution issues.
 import anime from 'animejs';
-import { KaryaSuchiLogo } from './Icons.tsx';
-import SakuraBackground from './SakuraBackground.tsx';
+import { KaryaSuchiLogo } from './Icons';
+import SakuraBackground from './SakuraBackground';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -24,8 +23,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   useEffect(() => {
     if (containerRef.current) {
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: containerRef.current,
             opacity: [0, 1],
             translateY: [20, 0],
@@ -37,8 +35,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   const switchMode = (newMode: AuthMode) => {
     if (formContainerRef.current) {
-        // Fix: cast anime to any to resolve call signature errors.
-        (anime as any)({
+        anime({
             targets: formContainerRef.current,
             opacity: 0,
             translateY: -10,
@@ -50,8 +47,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 setSuccess('');
                 setPassword('');
                 setConfirmPassword('');
-                // Fix: cast anime to any to resolve call signature errors.
-                (anime as any)({
+                anime({
                     targets: formContainerRef.current,
                     opacity: [0, 1],
                     translateY: [10, 0],
@@ -68,8 +64,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     if (savedUser) {
         const user = JSON.parse(savedUser);
         if (user.email === email && user.password === password) {
-            // Fix: cast anime to any to resolve call signature errors.
-            (anime as any)({
+            anime({
                 targets: containerRef.current,
                 opacity: 0,
                 translateY: -20,
@@ -121,13 +116,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      // Fix: cast anime to any to resolve call signature errors.
-      (anime as any)({ targets: e.target, borderColor: '#DE3163', duration: 300 });
+      anime({ targets: e.target, borderColor: '#DE3163', duration: 300 });
   };
   
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      // Fix: cast anime to any to resolve call signature errors.
-      (anime as any)({ targets: e.target, borderColor: '#FADADD', duration: 300 });
+      anime({ targets: e.target, borderColor: '#FADADD', duration: 300 });
   };
 
   const renderFormContent = () => {

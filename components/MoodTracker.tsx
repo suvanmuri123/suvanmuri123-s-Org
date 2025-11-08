@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Mood, MoodValue } from '../types.ts';
+import { Mood, MoodValue } from '../types';
 
 interface MoodTrackerProps {
   onAddMood: (mood: MoodValue) => void;

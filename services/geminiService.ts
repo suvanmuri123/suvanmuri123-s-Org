@@ -1,7 +1,6 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { format } from 'date-fns';
-import { ReflectionData } from '../types.ts';
+import { ReflectionData } from '../types';
 
 const API_KEY = process.env.API_KEY;
 
@@ -28,7 +27,6 @@ export const parseTaskFromText = async (
       contents: prompt,
       config: {
         responseMimeType: "application/json",
-        // Fix: Made `dueDate` optional and removed `nullable` for robustness.
         responseSchema: {
           type: Type.OBJECT,
           properties: {
